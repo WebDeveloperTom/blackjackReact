@@ -1,0 +1,33 @@
+body {
+  color: white;
+}
+
+.table {
+  background-color: #222327;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+  margin: 10px;
+}
+
+.buttons>button {
+  border: none;
+  color: white;
+  width: 100%;
+  border-radius: 2px;
+  margin: 2px;
+}
+
+#deal {
+  background-color: blue;
+}
+
+#hit {
+  background-color: green;
+}
+
+#stand {
+  background-color: red;
+}
