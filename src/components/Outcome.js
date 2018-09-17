@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 class Outcome extends Component {
   render() {
-    return <div>Click Deal to Start!</div>;
+    return <div className="outcome">Click Deal to Start!</div>;
   }
 }
 

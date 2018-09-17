@@ -4,6 +4,35 @@ body {
 
 .table {
   background-color: #222327;
+  height: 100%;
+}
+
+.hand {
+  margin-left: 10px;
+  padding-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 50px);
+}
+
+.outcome {
+  background-color: #E1E8F6;
+  color: #38798B;
+  height: 50px;
+  margin: 10px;
+  text-align: center;
+}
+
+.scoreBoard {
+  background-color: #FFF;
+  margin: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 25px;
+  text-align: center;
+}
+
+#dealerScore {
+  border-right: solid 2px black;
 }
 
 .buttons {

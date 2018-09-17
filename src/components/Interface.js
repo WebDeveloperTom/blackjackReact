@@ -6,7 +6,9 @@ class Interface extends Component {
       <div>
         <Outcome />
         <div className="scoreBoard">
-          <a href="">Dealer Score: </a>
+          <a id="dealerScore" href="">
+            Dealer Score:
+          </a>
           <a href="">Player Score: </a>
         </div>
         <div className="buttons">
