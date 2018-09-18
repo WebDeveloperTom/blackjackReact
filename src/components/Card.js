@@ -2,10 +2,10 @@ import React, { Component } from "react";
 
 class Card extends Component {
   render() {
-    const { img } = this.props;
+    const { card } = this.props;
     return (
       <div>
-        <img src={img} alt="" />
+        <img src={card.image} alt="" />
       </div>
     );
   }

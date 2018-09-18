@@ -9,13 +9,17 @@ class Table extends Component {
   state = {
     deckID: "8hqxk8fao730",
     deckStatus: {},
-    deckRemaining: {}
+    deckRemaining: {},
+    cards: {},
+    playerHand: [],
+    dealerHand: {}
   };
   getDeck = () => {
     // fetch a deck and draw all 52 cards
     // create card/deck array that players can draw from.
     // go through deck array and set KQJ values to 10
     // create dealer & player "hand" arrays and add 2 cards.
+    // use a timeout on the dealer drawing cards.
     fetch("https://deckofcardsapi.com/api/deck/8hqxk8fao730/shuffle/")
       .then(results => results.json())
       .then(data => {
@@ -32,23 +36,48 @@ class Table extends Component {
             .then(results => results.json())
             .then(data => {
               this.setState({
-                deckStatus: data.cards,
-                deckRemaining: data.remaining
+                cards: data.cards,
+                deckRemaining: data.remaining,
+                playerHand: []
               });
             });
         }
       });
   };
   playerHit = () => {
-    // https://deckofcardsapi.com/api/deck/<<deck_id>>/draw/?count=52
+    const cards = [...this.state.cards];
+    const rmvCard = cards.splice(1, 1);
+    const playerHand = [...this.state.playerHand, ...rmvCard];
+    this.setState({
+      cards: cards,
+      playerHand: playerHand
+    });
+  };
+  shuffleDeck = () => {
+    fetch("https://deckofcardsapi.com/api/deck/8hqxk8fao730/shuffle/")
+      .then(results => results.json())
+      .then(data => {
+        this.setState({
+          deckStatus: data,
+          deckRemaining: data.remaining
+        });
+      });
   };
 
   render() {
     return (
-      <div className="table">
-        <Hand />
-        <Interface getDeck={this.getDeck} />
-        <Hand />
+      <div>
+        <div id="admin">
+          <p>Admin Pannel - To Be Removed</p>
+          <button onClick={this.shuffleDeck}>Shuffle Deck</button>
+          <button onClick={this.getDeck}>Get/Load Deck</button>
+          <button onClick={this.playerHit}>Player Hit</button>
+        </div>
+        <div className="table">
+          <Hand cards={this.state.dealerHand} />
+          <Interface getDeck={this.getDeck} />
+          <Hand cards={this.state.playerHand} />
+        </div>
       </div>
     );
   }

@@ -3,10 +3,13 @@ import Card from "./Card";
 
 class Hand extends Component {
   render() {
+    const { cards } = this.props;
     return (
       <div className="hand">
-        <Card img="https://deckofcardsapi.com/static/img/KH.png" />
-        <Card img="https://deckofcardsapi.com/static/img/8C.png" />
+        {Object.keys(cards).map(item => {
+          console.log(cards[item]);
+          return <Card card={cards[item]} />;
+        })}
       </div>
     );
   }
