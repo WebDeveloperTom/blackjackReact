@@ -38,7 +38,8 @@ class Table extends Component {
               this.setState({
                 cards: data.cards,
                 deckRemaining: data.remaining,
-                playerHand: []
+                playerHand: [],
+                dealerHand: []
               });
             });
         }
