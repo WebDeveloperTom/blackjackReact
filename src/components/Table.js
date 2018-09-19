@@ -12,7 +12,7 @@ class Table extends Component {
     deckRemaining: {},
     cards: {},
     playerHand: [],
-    dealerHand: {}
+    dealerHand: []
   };
   getDeck = () => {
     // fetch a deck and draw all 52 cards
@@ -53,6 +53,15 @@ class Table extends Component {
       playerHand: playerHand
     });
   };
+  dealerHit = () => {
+    const cards = [...this.state.cards];
+    const rmvCard = cards.splice(1, 1);
+    const dealerHand = [...this.state.dealerHand, ...rmvCard];
+    this.setState({
+      cards: cards,
+      dealerHand: dealerHand
+    });
+  };
   shuffleDeck = () => {
     fetch("https://deckofcardsapi.com/api/deck/8hqxk8fao730/shuffle/")
       .then(results => results.json())
@@ -72,6 +81,7 @@ class Table extends Component {
           <button onClick={this.shuffleDeck}>Shuffle Deck</button>
           <button onClick={this.getDeck}>Get/Load Deck</button>
           <button onClick={this.playerHit}>Player Hit</button>
+          <button onClick={this.dealerHit}>Dealer Hit</button>
         </div>
         <div className="table">
           <Hand cards={this.state.dealerHand} />
