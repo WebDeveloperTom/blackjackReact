@@ -7,8 +7,8 @@ class Hand extends Component {
     return (
       <div className="hand">
         {Object.keys(cards).map(item => {
-          console.log(cards[item]);
-          return <Card card={cards[item]} />;
+          // key will only work for one deck
+          return <Card key={cards[item].code} card={cards[item]} />;
         })}
       </div>
     );
