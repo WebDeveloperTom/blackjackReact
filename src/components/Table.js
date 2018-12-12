@@ -1,20 +1,31 @@
 import React, { Component } from "react";
 import Hand from "./Hand";
 import Interface from "./Interface";
+import "../App.css";
 // https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1
 // https://deckofcardsapi.com/api/deck/<<deck_id>>/shuffle/
 // Deck ID = khfqtlx30ban
 // https://deckofcardsapi.com/api/deck/<<deck_id>>/draw/?count=2
 class Table extends Component {
   state = {
-    deckID: "khfqtlx30ban",
+    deckID: "",
     deckStatus: {},
     cards: {},
     playerHand: [],
     playerScore: [],
     dealerHand: [],
-    dealerScore: []
+    dealerScore: 0,
+    bust: false
   };
+  componentDidMount() {
+    fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1")
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          deckID: data.deck_id
+        });
+      });
+  }
 
   getDeck = () => {
     // fetch a deck and draw all 52 cards done
@@ -23,7 +34,7 @@ class Table extends Component {
     // create dealer & player "hand" arrays and add 2 cards.
     // use a timeout on the dealer drawing cards.
     // draw X cards function
-    fetch("https://deckofcardsapi.com/api/deck/khfqtlx30ban/shuffle/")
+    fetch(`https://deckofcardsapi.com/api/deck/${this.state.deckID}/shuffle/`)
       .then(results => results.json())
       .then(data => {
         this.setState({
@@ -33,50 +44,57 @@ class Table extends Component {
       .then(data => {
         if (this.state.deckStatus.success) {
           fetch(
-            "https://deckofcardsapi.com/api/deck/khfqtlx30ban/draw/?count=52"
+            `https://deckofcardsapi.com/api/deck/${
+              this.state.deckID
+            }/draw/?count=52`
           )
             .then(results => results.json())
             .then(data => {
+              //need to rename variable
               const setValues = data.cards;
               //Change K,Q,J value to 10s and A to 11
-              Object.keys(setValues).map(item => {
+              Object.keys(setValues).forEach(function(item) {
                 if (
                   setValues[item].value === "JACK" ||
                   setValues[item].value === "QUEEN" ||
                   setValues[item].value === "KING"
                 ) {
-                  setValues[item].value = "10";
-                }
-                if (setValues[item].value === "ACE") {
-                  setValues[item].value = "11";
+                  setValues[item].value = 10;
+                } else if (setValues[item].value === "ACE") {
+                  setValues[item].value = 11;
+                } else {
+                  setValues[item].value = Number(setValues[item].value);
                 }
               });
               this.setState({
-                cards: data.cards,
-                playerHand: [],
-                dealerHand: []
+                cards: data.cards
               });
             });
         }
       });
   };
-  calcScore = hand => {
-    //recieve the hand array
-    // go through each card in the hand and get .value
-    // convert .value to number and push into new array?
-    //if score >21, check for Aces(11s) then reduce score by 10 for each ace.
-  };
+
   playerHit = () => {
     const cards = [...this.state.cards];
     const rmvCard = cards.splice(1, 1);
     const playerHand = [...this.state.playerHand, ...rmvCard];
+    //work out players score
+    const hand = playerHand.map(item => {
+      return item.value;
+    });
+    const score = hand.reduce(function(total, num) {
+      return total + num;
+    }, 0);
+    //if score >21, check for Aces(11s) then reduce score by 10 for each ace.
+
     this.setState({
       cards: cards,
-      playerHand: playerHand
+      playerHand: playerHand,
+      playerScore: score
     });
   };
   //Dealer logic
-  // if everyone !blackjack || bust
+  // if everyone !blackjack || !bust
   // must hit until the cards total 17 or more points.
   //dealer also hits on a "soft" 17, i.e. a hand containing an ace and one or more other cards totaling six.)
   dealerHit = () => {
@@ -89,7 +107,7 @@ class Table extends Component {
     });
   };
   shuffleDeck = () => {
-    fetch("https://deckofcardsapi.com/api/deck/khfqtlx30ban/shuffle/")
+    fetch(`https://deckofcardsapi.com/api/deck/${this.state.deckID}/shuffle/`)
       .then(results => results.json())
       .then(data => {
         this.setState({
@@ -110,6 +128,7 @@ class Table extends Component {
       <div>
         <div id="admin">
           <p>Admin Pannel - To Be Removed</p>
+          <p>Deck ID is: {this.state.deckID}</p>
           <button onClick={this.shuffleDeck}>Shuffle Deck</button>
           <button onClick={this.getDeck}>Get/Load Deck</button>
           <button onClick={this.playerHit}>Player Hit</button>
@@ -118,7 +137,11 @@ class Table extends Component {
         </div>
         <div className="table">
           <Hand cards={this.state.dealerHand} />
-          <Interface getDeck={this.getDeck} />
+          <Interface
+            playerScore={this.state.playerScore}
+            playerHand={this.state.playerHand}
+            dealerHand={this.state.dealerHand}
+          />
           <Hand cards={this.state.playerHand} />
         </div>
       </div>

@@ -9,7 +9,7 @@ class Interface extends Component {
           <a id="dealerScore" href="">
             Dealer Score:
           </a>
-          <a href="">Player Score: </a>
+          <a href="">Player Score:{this.props.playerScore} </a>
         </div>
         <div className="buttons">
           <button id="deal">Deal</button>
