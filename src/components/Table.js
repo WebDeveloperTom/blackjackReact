@@ -112,15 +112,7 @@ class Table extends Component {
       dealerHand: dealerHand
     });
   };
-  shuffleDeck = () => {
-    fetch(`https://deckofcardsapi.com/api/deck/${this.state.deckID}/shuffle/`)
-      .then(results => results.json())
-      .then(data => {
-        this.setState({
-          deckStatus: data
-        });
-      });
-  };
+
   newGame = () => {
     this.getDeck();
     this.playerHit();
