@@ -17,6 +17,7 @@ class Table extends Component {
     dealerScore: 0,
     bust: false
   };
+
   componentDidMount() {
     fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1")
       .then(response => response.json())
@@ -24,6 +25,9 @@ class Table extends Component {
         this.setState({
           deckID: data.deck_id
         });
+      })
+      .then(response => {
+        this.getDeck();
       });
   }
 
@@ -85,6 +89,8 @@ class Table extends Component {
     const score = hand.reduce(function(total, num) {
       return total + num;
     }, 0);
+    if (score > 21) {
+    }
     //if score >21, check for Aces(11s) then reduce score by 10 for each ace.
 
     this.setState({
@@ -131,7 +137,12 @@ class Table extends Component {
           <p>Deck ID is: {this.state.deckID}</p>
           <button onClick={this.shuffleDeck}>Shuffle Deck</button>
           <button onClick={this.getDeck}>Get/Load Deck</button>
-          <button onClick={this.playerHit}>Player Hit</button>
+          {this.state.playerScore > 21 ? (
+            <button>BUST</button>
+          ) : (
+            <button onClick={this.playerHit}>Player Hit</button>
+          )}
+
           <button onClick={this.dealerHit}>Dealer Hit</button>
           <button onClick={this.newGame}>New Game</button>
         </div>
