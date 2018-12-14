@@ -26,7 +26,7 @@ class Table extends Component {
           deckID: data.deck_id
         });
       })
-      .then(response => {
+      .then(() => {
         this.getDeck();
       });
   }
@@ -35,9 +35,6 @@ class Table extends Component {
     // fetch a deck and draw all 52 cards done
     // create card/deck array that players can draw from. done
     // go through deck array and set KQJ values to 10 done
-    // create dealer & player "hand" arrays and add 2 cards.
-    // use a timeout on the dealer drawing cards.
-    // draw X cards function
     fetch(`https://deckofcardsapi.com/api/deck/${this.state.deckID}/shuffle/`)
       .then(results => results.json())
       .then(data => {
@@ -86,11 +83,7 @@ class Table extends Component {
     const hand = playerHand.map(item => {
       return item.value;
     });
-    const score = hand.reduce(function(total, num) {
-      return total + num;
-    }, 0);
-    if (score > 21) {
-    }
+    let score = this.checkScore(hand);
     //if score >21, check for Aces(11s) then reduce score by 10 for each ace.
 
     this.setState({
@@ -98,6 +91,19 @@ class Table extends Component {
       playerHand: playerHand,
       playerScore: score
     });
+  };
+  checkScore = hand => {
+    let score = hand.reduce(function(total, num) {
+      return total + num;
+    }, 0);
+    if (score > 21) {
+      hand.forEach(function(item) {
+        if (item === 11) {
+          score -= 10;
+        }
+      });
+    }
+    return score;
   };
   //Dealer logic
   // if everyone !blackjack || !bust
