@@ -4,7 +4,6 @@ import Interface from "./Interface";
 import "../App.css";
 // https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1
 // https://deckofcardsapi.com/api/deck/<<deck_id>>/shuffle/
-// Deck ID = khfqtlx30ban
 // https://deckofcardsapi.com/api/deck/<<deck_id>>/draw/?count=2
 class Table extends Component {
   state = {
@@ -109,13 +108,26 @@ class Table extends Component {
   // if everyone !blackjack || !bust
   // must hit until the cards total 17 or more points.
   //dealer also hits on a "soft" 17, i.e. a hand containing an ace and one or more other cards totaling six.)
+  playerStand = () => {
+    while (this.state.dealerScore < 17) {
+      this.dealerHit();
+    }
+  };
   dealerHit = () => {
     const cards = [...this.state.cards];
     const rmvCard = cards.splice(1, 1);
     const dealerHand = [...this.state.dealerHand, ...rmvCard];
+    //work out players score
+    const hand = dealerHand.map(item => {
+      return item.value;
+    });
+    let score = this.checkScore(hand);
+    //if score >21, check for Aces(11s) then reduce score by 10 for each ace.
+
     this.setState({
       cards: cards,
-      dealerHand: dealerHand
+      dealerHand: dealerHand,
+      dealerScore: score
     });
   };
 
@@ -134,7 +146,6 @@ class Table extends Component {
           <p>Admin Pannel - To Be Removed</p>
           <p>Deck ID is: {this.state.deckID}</p>
           <button onClick={this.shuffleDeck}>Shuffle Deck</button>
-          <button onClick={this.getDeck}>Get/Load Deck</button>
           {this.state.playerScore > 21 ? (
             <button>BUST</button>
           ) : (
@@ -150,6 +161,7 @@ class Table extends Component {
             playerScore={this.state.playerScore}
             playerHand={this.state.playerHand}
             dealerHand={this.state.dealerHand}
+            dealerScore={this.state.dealerScore}
           />
           <Hand cards={this.state.playerHand} />
         </div>
